@@ -53,11 +53,13 @@ end
 
 function Paddle:followBall(ball)
     --If the ball is up, move up.
-    if ball.y > self.y then
-        self.dy = -PADDLE_SPEED
-    --If the ball is down, move down
-    elseif ball.y < self.y then
-        self.dy = PADDLE_SPEED
+    if (bot.y-ball.y > 0) and (ball.x > VIRTUAL_WIDTH/2) then
+        bot.dy = -PADDLE_SPEED
+    --If the ball is up, move up.
+    elseif (bot.y-ball.y < 0) and (ball.x > VIRTUAL_WIDTH/2) then
+        bot.dy = PADDLE_SPEED
+    else
+        bot.dy = 0
     end
 end
 

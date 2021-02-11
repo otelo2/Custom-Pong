@@ -16,7 +16,7 @@ PADDLE_SIZE_Y = 20
 
 PLAYER1_COLOR = {255/255, 51/255, 51/255}
 PLAYER2_COLOR = {0/255, 146/255, 204/255}
-BOT_COLOR = {220/255, 212/255, 39/255} --Pending functionality
+BOT_COLOR = {119/255, 153/255, 51/255} --Pending functionality
 BALL_COLOR = {220/255, 212/255, 39/255}
 
 function love.load()
@@ -290,7 +290,8 @@ function love.keypressed(key)
     if key == 'escape' then
         --Exit the game
         love.event.quit()
-    elseif key == 'enter' or key == 'return' then
+    elseif (key == 'enter' or key == 'return') and (gameState == 'menu' or gameState == 'serve') then
+        gameMode = 'pVp'
         if gameState == 'menu' then
             --Set the state to serve
             gameState = 'serve'
@@ -316,8 +317,33 @@ function love.keypressed(key)
             --Reset position of the ball
             ball:reset()
         end
-    elseif key == 'space' then
-        print(key)
+    elseif (key == 'space' or key == 'return') and (gameState == 'menu' or gameState == 'serve') then
+        gameMode = 'pVb'
+        if gameState == 'menu' then
+            --Set the state to serve
+            gameState = 'serve'
+            --Stop the main menu music
+            menuMusic:stop()
+        elseif gameState == 'serve' then 
+            --Starts the game
+            gameState = 'play'
+        elseif gameState == 'done' then
+            gameState = 'serve'
+            --Reset the ball and scores
+            ball:reset()
+            player1Score = 0
+            player2Score = 0
+            --If one player wins the other one serves
+            if winningPlayer == 1 then
+                servingPlayer = 2
+            else
+                servingPlayer = 1
+            end
+        else 
+            gameState = 'menu'
+            --Reset position of the ball
+            ball:reset()
+        end
     end
 
 end
@@ -353,7 +379,12 @@ function love.draw()
 
     --Rendering the paddles
     player1:render()
-    player2:render()
+    --Render player 2 if selected 2 player mode. Render bot if selected 1 player mode
+    if gameMode == 'pVp' then
+        player2:render()
+    elseif gameMode == 'pVb' then
+        bot:render()
+    end
     
     --Rendering the ball
     ball:render()
