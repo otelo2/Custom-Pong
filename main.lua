@@ -56,6 +56,7 @@ function love.load()
     --Create the paddle objects
     player1 = Paddle(10, PADDLE_SIZE_Y, PADDLE_SIZE_X, PADDLE_SIZE_Y, PLAYER1_COLOR)
     player2 = Paddle(VIRTUAL_WIDTH-20, VIRTUAL_HEIGHT-PADDLE_SIZE_Y, PADDLE_SIZE_X, PADDLE_SIZE_Y, PLAYER2_COLOR)
+    bot = Paddle(VIRTUAL_WIDTH-20, VIRTUAL_HEIGHT-PADDLE_SIZE_Y, PADDLE_SIZE_X, PADDLE_SIZE_Y, BOT_COLOR)
 
     --Create the ball object
     ball = Ball(VIRTUAL_WIDTH/2-2, VIRTUAL_HEIGHT/2-2, 4, 4, BALL_COLOR)
@@ -68,7 +69,7 @@ function love.load()
     servingPlayer = 1
 
     --Set starting state
-    gameState = 'start'
+    gameState = 'menu'
     
 end
 
@@ -159,29 +160,57 @@ function love.update(dt)
             end
         end
 
-        if ball:collides(player2) then
-            --play a collision sound
-            randomSound = math.random(1, 4)
-            if randomSound == 1 then
-                collision1:play()
-                wallCollision2:play()
-            elseif randomSound == 2 then
-                collision2:play()
-                wallCollision4:play()
-            elseif randomSound == 3 then
-                collision3:play()
-                wallCollision1:play()
-            else 
-                collision4:play()
-                wallCollision5:play()
-            end
+        if gameMode == 'pVp' then
+            if ball:collides(player2) then
+                --play a collision sound
+                randomSound = math.random(1, 4)
+                if randomSound == 1 then
+                    collision1:play()
+                    wallCollision2:play()
+                elseif randomSound == 2 then
+                    collision2:play()
+                    wallCollision4:play()
+                elseif randomSound == 3 then
+                    collision3:play()
+                    wallCollision1:play()
+                else 
+                    collision4:play()
+                    wallCollision5:play()
+                end
 
-            ball.dx = -ball.dx * 1.03
-            ball.x = player2.x - 4
-            if ball.dy < 0 then
-                ball.dy = -math.random(10, 150)*2
-            else
-                ball.dy = math.random(10, 150)*2
+                ball.dx = -ball.dx * 1.03
+                ball.x = player2.x - 4
+                if ball.dy < 0 then
+                    ball.dy = -math.random(10, 150)*2
+                else
+                    ball.dy = math.random(10, 150)*2
+                end
+            end
+        elseif gameMode == 'pVb' then
+            if ball:collides(bot) then
+                --play a collision sound
+                randomSound = math.random(1, 4)
+                if randomSound == 1 then
+                    collision1:play()
+                    wallCollision2:play()
+                elseif randomSound == 2 then
+                    collision2:play()
+                    wallCollision4:play()
+                elseif randomSound == 3 then
+                    collision3:play()
+                    wallCollision1:play()
+                else 
+                    collision4:play()
+                    wallCollision5:play()
+                end
+
+                ball.dx = -ball.dx * 1.03
+                ball.x = bot.x - 4
+                if ball.dy < 0 then
+                    ball.dy = -math.random(10, 150)*2
+                else
+                    ball.dy = math.random(10, 150)*2
+                end
             end
         end
     elseif gameState == 'done' then
@@ -225,13 +254,18 @@ function love.update(dt)
         player1.dy = 0
     end
 
-    --Move the right paddle up and down.
-    if love.keyboard.isDown('up') then
-        player2.dy = -PADDLE_SPEED
-    elseif love.keyboard.isDown('down') then
-        player2.dy = PADDLE_SPEED
-    else
-        player2.dy = 0
+    if gameMode == 'pVp' then
+        --Move the right paddle up and down.
+        if love.keyboard.isDown('up') then
+            player2.dy = -PADDLE_SPEED
+        elseif love.keyboard.isDown('down') then
+            player2.dy = PADDLE_SPEED
+        else
+            player2.dy = 0
+        end
+    elseif gameMode == 'pVb' then
+        --Bot follows the ball around
+        bot:followBall(ball)
     end
 
     --Update the position of the ball
@@ -241,7 +275,11 @@ function love.update(dt)
 
     --Update the position of the paddles
     player1:update(dt)
-    player2:update(dt)
+    if gameMode == 'pVp' then
+        player2:update(dt) 
+    elseif gameMode== 'pVb' then
+        bot:update(dt)
+    end
 
     
 
@@ -253,7 +291,7 @@ function love.keypressed(key)
         --Exit the game
         love.event.quit()
     elseif key == 'enter' or key == 'return' then
-        if gameState == 'start' then
+        if gameState == 'menu' then
             --Set the state to serve
             gameState = 'serve'
             --Stop the main menu music
@@ -274,10 +312,12 @@ function love.keypressed(key)
                 servingPlayer = 1
             end
         else 
-            gameState = 'start'
+            gameState = 'menu'
             --Reset position of the ball
             ball:reset()
         end
+    elseif key == 'space' then
+        print(key)
     end
 
 end
@@ -290,7 +330,7 @@ function love.draw()
     love.graphics.setFont(smallFont)
 
     --Check state of the game
-    if gameState == 'start' then
+    if gameState == 'menu' then
         love.graphics.printf('Press enter to start!', 0,20,VIRTUAL_WIDTH,'center')
     elseif gameState == 'serve' then
         love.graphics.printf('Your turn Player ' .. tostring(servingPlayer) .. '!', 0,20,VIRTUAL_WIDTH,'center')

@@ -51,6 +51,16 @@ function Paddle:update(dt)
     end
 end
 
+function Paddle:followBall(ball)
+    --If the ball is up, move up.
+    if ball.y > self.y then
+        self.dy = -PADDLE_SPEED
+    --If the ball is down, move down
+    elseif ball.y < self.y then
+        self.dy = PADDLE_SPEED
+    end
+end
+
 --[[
     To be called by our main function in `love.draw`, ideally. Uses
     LÖVE2D's `rectangle` function, which takes in a draw mode as the first
