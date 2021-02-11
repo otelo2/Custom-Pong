@@ -33,6 +33,7 @@ function love.load()
 
     --Load the music file
     menuMusic = love.audio.newSource("Music/menuMusic.mp3", "stream")
+    playMusic = love.audio.newSource("Music/playMusic.mp3", "stream")
     menuMusic:play()
 
     --Loads all the sound effects
@@ -88,6 +89,7 @@ function love.update(dt)
 
     --Checks for collision between the ball, paddles and screen borders
     elseif gameState == 'play' then
+        playMusic:play()
         --Check for collision with the top of the screen
         if ball.y <= 0 then
             --Play collision sound effect
@@ -182,6 +184,8 @@ function love.update(dt)
                 ball.dy = math.random(10, 150)*2
             end
         end
+    elseif gameState == 'done' then
+        playMusic:stop()
     end
 
     --If the ball gets out of player1's goal, give score to player 2 
