@@ -32,19 +32,19 @@ function love.load()
     love.graphics.setFont(smallFont)
 
     --Load the music file
-    menuMusic = love.audio.newSource("music.mp3", "stream")
+    menuMusic = love.audio.newSource("Music/menuMusic.mp3", "stream")
     menuMusic:play()
 
     --Loads all the sound effects
-    collision1 = love.audio.newSource("collision1.ogg", "static")
-    collision2 = love.audio.newSource("collision2.ogg", "static")
-    collision3 = love.audio.newSource("collision3.ogg", "static")
-    collision4 = love.audio.newSource("collision4.ogg", "static")
-    wallCollision1 = love.audio.newSource("wallCollision1.ogg", "static")
-    wallCollision2 = love.audio.newSource("wallCollision2.ogg", "static")
-    wallCollision3 = love.audio.newSource("wallCollision3.ogg", "static")
-    wallCollision4 = love.audio.newSource("wallCollision4.ogg", "static")
-    wallCollision5 = love.audio.newSource("wallCollision5.ogg", "static")
+    collision1 = love.audio.newSource("Sound/collision1.ogg", "static")
+    collision2 = love.audio.newSource("Sound/collision2.ogg", "static")
+    collision3 = love.audio.newSource("Sound/collision3.ogg", "static")
+    collision4 = love.audio.newSource("Sound/collision4.ogg", "static")
+    wallCollision1 = love.audio.newSource("Sound/wallCollision1.ogg", "static")
+    wallCollision2 = love.audio.newSource("Sound/wallCollision2.ogg", "static")
+    wallCollision3 = love.audio.newSource("Sound/wallCollision3.ogg", "static")
+    wallCollision4 = love.audio.newSource("Sound/wallCollision4.ogg", "static")
+    wallCollision5 = love.audio.newSource("Sound/wallCollision5.ogg", "static")
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
