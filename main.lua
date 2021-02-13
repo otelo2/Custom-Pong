@@ -19,7 +19,7 @@ PLAYER2_COLOR = {0/255, 146/255, 204/255}
 BOT_COLOR = {119/255, 153/255, 51/255}
 BALL_COLOR = {220/255, 212/255, 39/255}
 
-WINNING_SCORE = 10
+WINNING_SCORE = 5
 
 function love.load()
     --Used for initializing the game state at the very beggining.
