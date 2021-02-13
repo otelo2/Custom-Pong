@@ -36,6 +36,9 @@ function love.load()
     playMusic = love.audio.newSource("Music/playMusic.mp3", "stream")
     menuMusic:play()
 
+    --Load the background image
+    gameBackground = love.graphics.newImage("Images/gameBackground.png")
+
     --Loads all the sound effects
     collision1 = love.audio.newSource("Sound/collision1.ogg", "static")
     collision2 = love.audio.newSource("Sound/collision2.ogg", "static")
@@ -352,6 +355,9 @@ function love.draw()
     --Called each frame by love after update for drawing things to the screen once they've changed
     push:apply("start")
 
+    --Draw background image
+    love.graphics.draw(gameBackground, 0, 0, 0, 0.7, 0.5)
+
     --Title of the game
     love.graphics.setFont(smallFont)
 
@@ -389,6 +395,8 @@ function love.draw()
     --Rendering the ball
     ball:render()
 
+    --Reset color
+    love.graphics.setColor(255,255,255)
 
     push:apply("end")
 end
