@@ -25,19 +25,23 @@ function love.load()
 
     math.randomseed(os.time())
 
-    --Loads the two fonts for the game
+    --Loads all the fonts for the game
     smallFont = love.graphics.newFont("font.ttf", 8)
+    mediumFont = love.graphics.newFont("font.ttf", 24)
+    titleFont = love.graphics.newFont("font.ttf", 48)
     scoreFont = love.graphics.newFont("font.ttf", 32)
+    miniFont = love.graphics.newFont("font.ttf", 6)
 
     love.graphics.setFont(smallFont)
 
     --Load the music file
     menuMusic = love.audio.newSource("Music/menuMusic.mp3", "stream")
     playMusic = love.audio.newSource("Music/playMusic.mp3", "stream")
-    menuMusic:play()
 
-    --Load the background image
+    --Load the game background image
     gameBackground = love.graphics.newImage("Images/gameBackground.png")
+    --Load the manu background image
+    menuBackground = love.graphics.newImage("Images/menuBackground.jpg")
 
     --Loads all the sound effects
     collision1 = love.audio.newSource("Sound/collision1.ogg", "static")
@@ -80,8 +84,12 @@ end
 function love.update(dt)
     --Called each frame by love. dt is time in seconds elapsed since last frame
 
+    if gameState == 'menu' then
+        menuMusic:play()
+
+
     --Sets the correct serving for each player
-    if gameState == 'serve' then
+    elseif gameState == 'serve' then
         if servingPlayer == 1 then
             --Player 1 serves. Go left
             ball.dx = -math.random(50, 100)*2
@@ -355,45 +363,71 @@ function love.draw()
     --Called each frame by love after update for drawing things to the screen once they've changed
     push:apply("start")
 
-    --Draw background image
-    love.graphics.draw(gameBackground, 0, 0, 0, 0.7, 0.5)
-
-    --Title of the game
-    love.graphics.setFont(smallFont)
-
-    --Check state of the game
+    --Check if we are on the menu or playing
     if gameState == 'menu' then
-        love.graphics.printf('Press enter to start!', 0,20,VIRTUAL_WIDTH,'center')
-    elseif gameState == 'serve' then
-        love.graphics.printf('Your turn Player ' .. tostring(servingPlayer) .. '!', 0,20,VIRTUAL_WIDTH,'center')
-        love.graphics.printf('Press enter to serve!', 0,30,VIRTUAL_WIDTH,'center')
-    elseif gameState == 'play' then
-        --Show nothing while playing
-    elseif gameState == 'done' then
-        love.graphics.printf('Player ' .. tostring(winningPlayer) .. ' won!', 0,20,VIRTUAL_WIDTH,'center')
-        love.graphics.printf('Press enter to play again', 0,30,VIRTUAL_WIDTH,'center')
+        --Draw all the menu things
+        love.graphics.draw(menuBackground, 0, 0, 0 ,0.361, 0.35)
+        love.graphics.setFont(titleFont)
+        love.graphics.printf('Pong', 0, 20,VIRTUAL_WIDTH,'center')
+        love.graphics.setFont(mediumFont)
+        --Show the game modes
+        love.graphics.printf('Press space for 1 Player mode!', 0, 170, VIRTUAL_WIDTH,'center')
+        love.graphics.printf('Press enter for 2 Players mode!', 0, 200, VIRTUAL_WIDTH,'center')
+        --Credits
+        love.graphics.setFont(miniFont)
+        love.graphics.printf('Modified by Jose Antonio Solis Martinez', 0, 230, VIRTUAL_WIDTH,'right')
     else
-        love.graphics.printf('Hello Pong!',0,20,VIRTUAL_WIDTH,'center')
-    end
+        --Draw the game things 
     
+        --Draw background image
+        love.graphics.draw(gameBackground, 0, 0, 0, 0.7, 0.5)
 
-    --Place the scores
-    love.graphics.setFont(scoreFont)
-    love.graphics.setColor(1,1,1,0.5)
-    love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH/2-50, VIRTUAL_HEIGHT/3)
-    love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH/2+30, VIRTUAL_HEIGHT/3)
+        --Set the regular text font
+        love.graphics.setFont(smallFont)
 
-    --Rendering the paddles
-    player1:render()
-    --Render player 2 if selected 2 player mode. Render bot if selected 1 player mode
-    if gameMode == 'pVp' then
-        player2:render()
-    elseif gameMode == 'pVb' then
-        bot:render()
+        --Check state of the game
+        if gameState == 'serve' then
+            if gameMode == 'pVp' then
+                -- 2 Player mode graphics
+                love.graphics.printf('Your turn Player ' .. tostring(servingPlayer) .. '!', 0,20,VIRTUAL_WIDTH,'center')
+                love.graphics.printf('Press enter to serve!', 0,30,VIRTUAL_WIDTH,'center')
+            else
+                -- 1 Player mode graphics
+                if servingPlayer == 1 then
+                    love.graphics.printf('Your turn Player ' .. tostring(servingPlayer) .. '!', 0,20,VIRTUAL_WIDTH,'center')
+                else
+                    love.graphics.printf('It\'s the turn of the computer!', 0,20,VIRTUAL_WIDTH,'center')
+                end
+                love.graphics.printf('Press space to serve!', 0,30,VIRTUAL_WIDTH,'center')
+            end
+        elseif gameState == 'play' then
+            --Show nothing while playing
+        elseif gameState == 'done' then
+            love.graphics.printf('Player ' .. tostring(winningPlayer) .. ' won!', 0,20,VIRTUAL_WIDTH,'center')
+            love.graphics.printf('Press enter to play again', 0,30,VIRTUAL_WIDTH,'center')
+        else
+            love.graphics.printf('Hello Pong!',0,20,VIRTUAL_WIDTH,'center')
+        end
+        
+
+        --Place the scores
+        love.graphics.setFont(scoreFont)
+        love.graphics.setColor(1,1,1,0.5)
+        love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH/2-50, VIRTUAL_HEIGHT/3)
+        love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH/2+30, VIRTUAL_HEIGHT/3)
+
+        --Rendering the paddles
+        player1:render()
+        --Render player 2 if selected 2 player mode. Render bot if selected 1 player mode
+        if gameMode == 'pVp' then
+            player2:render()
+        elseif gameMode == 'pVb' then
+            bot:render()
+        end
+        
+        --Rendering the ball
+        ball:render()
     end
-    
-    --Rendering the ball
-    ball:render()
 
     --Reset color
     love.graphics.setColor(255,255,255)
