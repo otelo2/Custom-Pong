@@ -56,6 +56,10 @@ function love.load()
     wallCollision3 = love.audio.newSource("Sound/wallCollision3.ogg", "static")
     wallCollision4 = love.audio.newSource("Sound/wallCollision4.ogg", "static")
     wallCollision5 = love.audio.newSource("Sound/wallCollision5.ogg", "static")
+    ballMiss1 = love.audio.newSource("Sound/ballMiss1.ogg", "static")
+    ballMiss2 = love.audio.newSource("Sound/ballMiss2.ogg", "static")
+    ballMiss3 = love.audio.newSource("Sound/ballMiss3.ogg", "static")
+    ballMiss4 = love.audio.newSource("Sound/ballMiss4.ogg", "static")
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -93,6 +97,7 @@ function love.update(dt)
 
     --Sets the correct serving for each player
     elseif gameState == 'serve' then
+        goodServe = false
         if servingPlayer == 1 then
             --Player 1 serves. Go left
             ball.dx = -math.random(50, 100)*2
@@ -121,7 +126,7 @@ function love.update(dt)
                 wallCollision5:play()
             end
 
-            --Make the ball bounce away from the boundry
+            --Make the ball bounce away from the walls
             ball.y = 0
             ball.dy = -ball.dy
             
@@ -149,6 +154,7 @@ function love.update(dt)
         end
 
         if ball:collides(player1) then
+            goodServe = true
             --play a collision sound
             randomSound = math.random(1, 4)
             if randomSound == 1 then
@@ -176,6 +182,7 @@ function love.update(dt)
 
         if gameMode == 'pVp' then
             if ball:collides(player2) then
+                goodServe = true
                 --play a collision sound
                 randomSound = math.random(1, 4)
                 if randomSound == 1 then
@@ -202,6 +209,7 @@ function love.update(dt)
             end
         elseif gameMode == 'pVb' then
             if ball:collides(bot) then
+                goodServe = true
                 --play a collision sound
                 randomSound = math.random(1, 4)
                 if randomSound == 1 then
@@ -233,6 +241,25 @@ function love.update(dt)
 
     --If the ball gets out of player1's goal, give score to player 2 
     if ball.x < 0 then
+        --Chech if a player missed the serve
+        if goodServe == false then
+            --Play the sound for a missed serve
+            randomSound = math.random(1, 4)
+                if randomSound == 1 then
+                    collision1:play()
+                    ballMiss1:play()
+                elseif randomSound == 2 then
+                    collision2:play()
+                    ballMiss2:play()
+                elseif randomSound == 3 then
+                    collision3:play()
+                    ballMiss3:play()
+                else 
+                    collision4:play()
+                    ballMiss4:play()
+                end
+        end
+        --Increase the corresponding players score
         player2Score = player2Score + 1
         --Check if we've reached the max score and won
         if player2Score == WINNING_SCORE then
@@ -249,6 +276,25 @@ function love.update(dt)
 
     --If the ball gets out of player2's goal, give score to player 1
     if ball.x > VIRTUAL_WIDTH then
+        --Chech if a player missed the serve
+        if goodServe == false then
+            --Play the sound for a missed serve
+            randomSound = math.random(1, 4)
+                if randomSound == 1 then
+                    collision1:play()
+                    ballMiss1:play()
+                elseif randomSound == 2 then
+                    collision2:play()
+                    ballMiss2:play()
+                elseif randomSound == 3 then
+                    collision3:play()
+                    ballMiss3:play()
+                else 
+                    collision4:play()
+                    ballMiss4:play()
+                end
+        end
+        --Increase the corresponding players score
         player1Score = player1Score + 1
         --Check if we've reached the max score and won
         if player1Score == WINNING_SCORE then
@@ -418,7 +464,7 @@ function love.draw()
                 love.graphics.printf('Player ' .. tostring(winningPlayer) .. ' won!', 0,20,VIRTUAL_WIDTH,'center')
             end
             love.graphics.setColor(255,255,255)
-            love.graphics.printf('Press enter to play again', 0,30,VIRTUAL_WIDTH,'center')
+            love.graphics.printf('Press enter or space to play again', 0,30,VIRTUAL_WIDTH,'center')
         else
             love.graphics.printf('Hello Pong!',0,20,VIRTUAL_WIDTH,'center')
         end
