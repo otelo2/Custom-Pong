@@ -16,8 +16,10 @@ PADDLE_SIZE_Y = 20
 
 PLAYER1_COLOR = {255/255, 51/255, 51/255}
 PLAYER2_COLOR = {0/255, 146/255, 204/255}
-BOT_COLOR = {119/255, 153/255, 51/255} --Pending functionality
+BOT_COLOR = {119/255, 153/255, 51/255}
 BALL_COLOR = {220/255, 212/255, 39/255}
+
+WINNING_SCORE = 10
 
 function love.load()
     --Used for initializing the game state at the very beggining.
@@ -29,7 +31,7 @@ function love.load()
     smallFont = love.graphics.newFont("font.ttf", 8)
     mediumFont = love.graphics.newFont("font.ttf", 24)
     titleFont = love.graphics.newFont("font.ttf", 48)
-    scoreFont = love.graphics.newFont("font.ttf", 32)
+    scoreFont = love.graphics.newFont("font.ttf", 80)
     miniFont = love.graphics.newFont("font.ttf", 6)
 
     love.graphics.setFont(smallFont)
@@ -232,7 +234,7 @@ function love.update(dt)
     if ball.x < 0 then
         player2Score = player2Score + 1
         --Check if we've reached the max score and won
-        if player2Score == 10 then
+        if player2Score == WINNING_SCORE then
             winningPlayer = 2
             gameState = 'done'
         else
@@ -246,7 +248,7 @@ function love.update(dt)
     if ball.x > VIRTUAL_WIDTH then
         player1Score = player1Score + 1
         --Check if we've reached the max score and won
-        if player2Score == 10 then
+        if player1Score == WINNING_SCORE then
             winningPlayer = 1
             gameState = 'done'
         else
@@ -301,7 +303,7 @@ function love.keypressed(key)
     if key == 'escape' then
         --Exit the game
         love.event.quit()
-    elseif (key == 'enter' or key == 'return') and (gameState == 'menu' or gameState == 'serve') then
+    elseif (key == 'enter' or key == 'return') and (gameState == 'menu' or gameState == 'serve' or gameState == 'done') then
         gameMode = 'pVp'
         if gameState == 'menu' then
             --Set the state to serve
@@ -403,7 +405,14 @@ function love.draw()
         elseif gameState == 'play' then
             --Show nothing while playing
         elseif gameState == 'done' then
-            love.graphics.printf('Player ' .. tostring(winningPlayer) .. ' won!', 0,20,VIRTUAL_WIDTH,'center')
+            RAINBOW_COLOR = {math.random(0, 255)/255, math.random(0, 255)/255, math.random(0, 255)/255}
+            love.graphics.setColor(RAINBOW_COLOR)
+            if gameMode == 'pVb' and winningPlayer == 2 then
+                love.graphics.printf('The computer won!', 0,20,VIRTUAL_WIDTH,'center')
+            else
+                love.graphics.printf('Player ' .. tostring(winningPlayer) .. ' won!', 0,20,VIRTUAL_WIDTH,'center')
+            end
+            love.graphics.setColor(255,255,255)
             love.graphics.printf('Press enter to play again', 0,30,VIRTUAL_WIDTH,'center')
         else
             love.graphics.printf('Hello Pong!',0,20,VIRTUAL_WIDTH,'center')
@@ -412,9 +421,9 @@ function love.draw()
 
         --Place the scores
         love.graphics.setFont(scoreFont)
-        love.graphics.setColor(1,1,1,0.5)
-        love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH/2-50, VIRTUAL_HEIGHT/3)
-        love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH/2+30, VIRTUAL_HEIGHT/3)
+        love.graphics.setColor(1, 1, 1, 0.1)
+        love.graphics.print(tostring(player1Score), VIRTUAL_WIDTH/5, 0)
+        love.graphics.print(tostring(player2Score), VIRTUAL_WIDTH-125, 0)
 
         --Rendering the paddles
         player1:render()
