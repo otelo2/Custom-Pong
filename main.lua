@@ -36,9 +36,10 @@ function love.load()
 
     love.graphics.setFont(smallFont)
 
-    --Load the music file
+    --Load the music files
     menuMusic = love.audio.newSource("Music/menuMusic.mp3", "stream")
     playMusic = love.audio.newSource("Music/playMusic.mp3", "stream")
+    winMusic = love.audio.newSource("Music/winMusic.mp3", "stream")
 
     --Load the game background image
     gameBackground = love.graphics.newImage("Images/gameBackground.png")
@@ -237,6 +238,8 @@ function love.update(dt)
         if player2Score == WINNING_SCORE then
             winningPlayer = 2
             gameState = 'done'
+            --Play won music
+            winMusic:play()
         else
             servingPlayer = 1
             gameState = 'serve'
@@ -251,6 +254,8 @@ function love.update(dt)
         if player1Score == WINNING_SCORE then
             winningPlayer = 1
             gameState = 'done'
+            --Play won music
+            winMusic:play()
         else
             servingPlayer = 2
             gameState = 'serve'
