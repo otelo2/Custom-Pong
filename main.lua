@@ -60,6 +60,10 @@ function love.load()
     ballMiss2 = love.audio.newSource("Sound/ballMiss2.ogg", "static")
     ballMiss3 = love.audio.newSource("Sound/ballMiss3.ogg", "static")
     ballMiss4 = love.audio.newSource("Sound/ballMiss4.ogg", "static")
+    score1 = love.audio.newSource("Sound/score1.ogg", "static")
+    score2 = love.audio.newSource("Sound/score2.ogg", "static")
+    score3 = love.audio.newSource("Sound/score3.ogg", "static")
+    score4 = love.audio.newSource("Sound/score4.ogg", "static")
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
@@ -261,6 +265,19 @@ function love.update(dt)
         end
         --Increase the corresponding players score
         player2Score = player2Score + 1
+
+        --Play the sound for when you score
+        randomSound = math.random(1, 4)
+                if randomSound == 1 then
+                    score1:play()
+                elseif randomSound == 2 then
+                    score2:play()
+                elseif randomSound == 3 then
+                    score3:play()
+                else 
+                    score4:play()
+                end
+
         --Check if we've reached the max score and won
         if player2Score == WINNING_SCORE then
             winningPlayer = 2
@@ -296,6 +313,19 @@ function love.update(dt)
         end
         --Increase the corresponding players score
         player1Score = player1Score + 1
+
+        --Play the sound for when you score
+        randomSound = math.random(1, 4)
+                if randomSound == 1 then
+                    score1:play()
+                elseif randomSound == 2 then
+                    score2:play()
+                elseif randomSound == 3 then
+                    score3:play()
+                else 
+                    score4:play()
+                end
+
         --Check if we've reached the max score and won
         if player1Score == WINNING_SCORE then
             winningPlayer = 1
